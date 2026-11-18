@@ -197,6 +197,19 @@ export function isNotificationPage(url: string = location.href): boolean {
 }
 
 /**
+ * Check if the current page is a bubble (小站) page
+ * e.g. https://www.bilibili.com/bubble/home/{id}
+ * @param url the url to check
+ * @returns true if the current page is a bubble page
+ */
+export function isBubblePage(url: string = location.href): boolean {
+  if (/https?:\/\/(?:www\.)?bilibili\.com\/bubble\/.*/.test(url)) {
+    return true
+  }
+  return false
+}
+
+/**
  * Compresses and resizes an image file.
  *
  * @param file - The image file to compress and resize.

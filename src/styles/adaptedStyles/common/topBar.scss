@@ -2,6 +2,12 @@
   background-color: transparent !important;
 }
 
+// Make the original Bilibili top bar container transparent
+// so it never covers the page background behind it
+.bili-header {
+  background-color: transparent !important;
+}
+
 .bewly-design {
   // Implement specific modifications to the page, like tweaking the layout, and place those styles here
   .bili-header .slide-down,

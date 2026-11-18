@@ -1,0 +1,50 @@
+.bewly-design.bubblePage {
+  // The original top bar inside `.nav` is hidden by `.remove-top-bar`;
+  // hide the whole `.nav` container as well in case Bilibili renders a
+  // different structure inside it. It keeps its 64px height so the page
+  // layout stays intact and the BewlyBewly top bar takes its place.
+  &.remove-top-bar {
+    .nav {
+      visibility: hidden;
+    }
+  }
+
+  // #region appearance wallpaper 外觀壁紙
+  // The wallpaper url & mask are applied to `<html>` as inline styles by
+  // `necessarySettingsWatchers`, so the bubble page gets the same appearance
+  // background as the homepage. Content cards above the body stay opaque.
+  body {
+    background-color: var(--bew-homepage-bg) !important;
+    background-image: var(--bubble-page-wallpaper, none);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center center;
+    background-attachment: fixed;
+  }
+
+  // Wallpaper mask, enabled by the `bubble-wallpaper-mask` class on `<html>`
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    display: none;
+    pointer-events: none;
+    background-color: var(--bew-homepage-bg-mask);
+    backdrop-filter: blur(var(--bubble-page-wallpaper-blur, 0px));
+  }
+
+  &.bubble-wallpaper-mask body::before {
+    display: block;
+  }
+  // #endregion
+
+  // In dark mode the jinkela theme variables (--bg1, --bg2, --text1, ...) are
+  // already remapped globally in `variables.scss` (`.dark.bewly-design *`),
+  // only the body background set by the bubble page itself needs an override
+  &.dark {
+    body {
+      background-color: var(--bew-bg) !important;
+    }
+  }
+}

@@ -2,7 +2,7 @@ import { useI18n } from 'vue-i18n'
 
 import { LanguageType } from '~/enums/appEnums'
 import { accessKey, settings } from '~/logic'
-import { getUserID, injectCSS } from '~/utils/main'
+import { getUserID, injectCSS, isBubblePage } from '~/utils/main'
 
 export function setupNecessarySettingsWatchers() {
   const { locale } = useI18n()
@@ -284,4 +284,34 @@ export function setupNecessarySettingsWatchers() {
     },
     { immediate: true },
   )
+
+  // Apply the appearance wallpaper to the bubble page (小站) background,
+  // like the homepage does; see `pages/bubblePage.scss`
+  if (isBubblePage()) {
+    watch(
+      [
+        () => settings.value.wallpaper,
+        () => settings.value.enableWallpaperMasking,
+        () => settings.value.wallpaperMaskOpacity,
+        () => settings.value.wallpaperBlurIntensity,
+      ],
+      () => {
+        const html = document.documentElement
+        const { wallpaper, enableWallpaperMasking, wallpaperMaskOpacity, wallpaperBlurIntensity } = settings.value
+
+        if (wallpaper) {
+          html.style.setProperty('--bubble-page-wallpaper', `url("${wallpaper}")`)
+          html.style.setProperty('--bew-homepage-bg-mask-opacity', `${wallpaperMaskOpacity}%`)
+          html.style.setProperty('--bubble-page-wallpaper-blur', `${wallpaperBlurIntensity}px`)
+          html.classList.toggle('bubble-wallpaper-mask', enableWallpaperMasking)
+        }
+        else {
+          html.style.removeProperty('--bubble-page-wallpaper')
+          html.style.removeProperty('--bubble-page-wallpaper-blur')
+          html.classList.remove('bubble-wallpaper-mask')
+        }
+      },
+      { immediate: true },
+    )
+  }
 }

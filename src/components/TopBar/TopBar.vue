@@ -5,11 +5,12 @@ import type { Ref, UnwrapNestedRefs } from 'vue'
 import { useBewlyApp } from '~/composables/useAppProvider'
 import { useDark } from '~/composables/useDark'
 import { useDelayedHover } from '~/composables/useDelayedHover'
+import { usePlayerWebFullscreen } from '~/composables/usePlayerWebFullscreen'
 import { OVERLAY_SCROLL_BAR_SCROLL, TOP_BAR_VISIBILITY_CHANGE } from '~/constants/globalEvents'
 import { AppPage } from '~/enums/appEnums'
 import { settings } from '~/logic'
 import api from '~/utils/api'
-import { getUserID, isHomePage, isInIframe } from '~/utils/main'
+import { getUserID, isBubblePage, isHomePage, isInIframe } from '~/utils/main'
 import emitter from '~/utils/mitt'
 import { createTransformer } from '~/utils/transformer'
 
@@ -139,6 +140,8 @@ const isTopBarFixed = computed((): boolean => {
     || /https?:\/\/(?:www.)?bilibili.com\/bangumi\/play\/.*/.test(location.href)
     // moment page
     || /https?:\/\/t.bilibili.com.*/.test(location.href)
+    // bubble page 小站頁面
+    || isBubblePage()
     // channel, anime, chinese anime, tv shows, movie, variety shows, mooc
     || /https?:\/\/(?:www.)?bilibili.com\/(?:v|anime|guochuang|tv|movie|variety|mooc).*/.test(location.href)
     // articles page
@@ -475,6 +478,9 @@ function toggleTopBarVisible(visible: boolean) {
   hideTopBar.value = !visible
   emitter.emit(TOP_BAR_VISIBILITY_CHANGE, visible)
 }
+
+// Collapse the top bar while the player is in web fullscreen (网页全屏)
+usePlayerWebFullscreen(entered => toggleTopBarVisible(!entered))
 
 defineExpose({
   toggleTopBarVisible,

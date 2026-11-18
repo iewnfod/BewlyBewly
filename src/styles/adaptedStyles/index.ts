@@ -3,7 +3,7 @@ import './shadowDom'
 import './thirdParties'
 
 import { settings } from '~/logic/storage'
-import { isHomePage, isInIframe } from '~/utils/main'
+import { isBubblePage, isHomePage, isInIframe } from '~/utils/main'
 
 async function setupStyles() {
   const currentUrl = document.URL
@@ -32,6 +32,12 @@ async function setupStyles() {
     || /https?:\/\/www\.bilibili\.com\/opus\/.*/.test(currentUrl)) {
     await import('./pages/momentsPage.scss')
     document.documentElement.classList.add('momentsPage')
+  }
+
+  // bubble page 小站頁面 e.g. https://www.bilibili.com/bubble/home/{id}
+  else if (isBubblePage(currentUrl)) {
+    await import('./pages/bubblePage.scss')
+    document.documentElement.classList.add('bubblePage')
   }
 
   // history page 历史记录页
