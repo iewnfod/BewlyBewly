@@ -39,11 +39,12 @@ const FullAPI = Object.assign({}, ...API_COLLECTION)
 const handleMessage = apiListenerFactory(FullAPI)
 
 export function setupApiMsgLstnrs() {
-  browser.runtime.onConnect.removeListener(handleConnect)
-  browser.runtime.onConnect.addListener(handleConnect)
-}
-
-function handleConnect() {
+  // The listener must be registered synchronously at the top level of the
+  // service worker. If it is only registered inside another event callback
+  // (e.g. `runtime.onConnect`), a cold-started service worker will drop the
+  // first message that woke it up, and every API request from long-idle
+  // content scripts (moments, watch later, history, ...) keeps failing until
+  // the page is reloaded. See https://github.com/BewlyBewly/BewlyBewly/issues/1116
   browser.runtime.onMessage.removeListener(handleMessage)
   browser.runtime.onMessage.addListener(handleMessage)
 }
