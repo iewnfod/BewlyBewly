@@ -39,3 +39,15 @@ jobs:
           name: BewlyBewly-${{ github.sha }}
           path: extension
           if-no-files-found: error
+
+      - name: Build Extension-Firefox
+        run: pnpm build-firefox
+
+      # To try it out, load the extracted folder via about:debugging
+      # -> This Firefox -> Load Temporary Add-on... (pick manifest.json)
+      - name: Upload Extension-Firefox
+        uses: actions/upload-artifact@v7
+        with:
+          name: BewlyBewly-Firefox-${{ github.sha }}
+          path: extension-firefox
+          if-no-files-found: error
