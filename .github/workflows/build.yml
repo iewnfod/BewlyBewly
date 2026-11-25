@@ -1,0 +1,41 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - '**'
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v5
+
+      - name: Set node
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build Extension
+        run: pnpm build
+
+      # The artifact is downloaded as a zip with manifest.json at its root,
+      # so it can be dragged into chrome://extensions as is
+      - name: Upload Extension
+        uses: actions/upload-artifact@v7
+        with:
+          name: BewlyBewly-${{ github.sha }}
+          path: extension
+          if-no-files-found: error
