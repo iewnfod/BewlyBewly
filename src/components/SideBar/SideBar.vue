@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Icon } from '@iconify/vue'
+import { Icon, loadIcons } from '@iconify/vue'
 
 import { useDark } from '~/composables/useDark'
 import { useDelayedHover } from '~/composables/useDelayedHover'
@@ -10,6 +10,9 @@ import type { HoveringDockItem } from './types'
 
 const emit = defineEmits(['settings-visibility-change'])
 const { isDark, toggleDark } = useDark()
+
+// Preload the icons that are only mounted on hover
+loadIcons(['line-md:sunny-outline-to-moon-loop-transition', 'line-md:moon-alt-to-sunny-outline-loop-transition'])
 
 const hideSidebar = ref<boolean>(false)
 const sideBarContentHover = ref<boolean>(false)
@@ -88,7 +91,8 @@ function toggleHideSidebar(hide: boolean) {
           @mouseleave="hoveringDockItem.themeMode = false"
         >
           <Transition name="fade">
-            <div v-show="hoveringDockItem.themeMode" absolute flex>
+            <!-- Use `v-if` instead of `v-show`, the looping SMIL animation keeps forcing frames even if it's hidden -->
+            <div v-if="hoveringDockItem.themeMode" absolute flex>
               <Icon v-if="isDark" icon="line-md:sunny-outline-to-moon-loop-transition" />
               <Icon v-else icon="line-md:moon-alt-to-sunny-outline-loop-transition" />
             </div>

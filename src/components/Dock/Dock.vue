@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Icon } from '@iconify/vue'
+import { Icon, loadIcons } from '@iconify/vue'
 import { useElementSize, useWindowSize } from '@vueuse/core'
 import { computed, ref } from 'vue'
 
@@ -31,6 +31,9 @@ const emit = defineEmits<{
 const mainStore = useMainStore()
 const { isDark, toggleDark } = useDark()
 const { reachTop } = useBewlyApp()
+
+// Preload the icons that are only mounted on hover
+loadIcons(['line-md:sunny-outline-to-moon-loop-transition', 'line-md:moon-alt-to-sunny-outline-loop-transition'])
 
 const hideDock = ref<boolean>(false)
 const dockContentHover = ref<boolean>(false)
@@ -311,7 +314,8 @@ const dockTransformStyle = computed((): { transform: string, transformOrigin: st
             @mouseleave="hoveringDockItem.themeMode = false"
           >
             <Transition name="fade">
-              <div v-show="hoveringDockItem.themeMode" absolute>
+              <!-- Use `v-if` instead of `v-show`, the looping SMIL animation keeps forcing frames even if it's hidden -->
+              <div v-if="hoveringDockItem.themeMode" absolute>
                 <Icon v-if="isDark" icon="line-md:sunny-outline-to-moon-loop-transition" />
                 <Icon v-else icon="line-md:moon-alt-to-sunny-outline-loop-transition" />
               </div>
